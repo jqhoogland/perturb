@@ -142,10 +142,11 @@ class Plotter:
         self.experiment = experiment
         self.ivl = ivl
         self.average_over = average_over or []
+        self.dir = dir
+
         self.plot_fns: List[Tuple[Callable, str]] = [
             (self.plot_performance, "Performance")
         ]
-        self.dir = dir
 
     def register_plot_fn(self, plot_fn: Callable, name: Optional[str] = None):
         name = name or plot_fn.__name__
@@ -154,8 +155,11 @@ class Plotter:
     def register(self, experiment: "Experiment"):
         self.experiment = experiment
 
-    def plot(self, epoch_idx: int, batch_idx: int, step: int, overwrite: bool = True):
+    def plot(self, step: int, overwrite: bool = True, **kwargs):
         assert self.experiment is not None, "Experiment not registered with Plotter"
+
+        if step == 0:
+            return
 
         df = self.experiment.df()
         df = df.loc[df["step"] <= step]
@@ -167,15 +171,13 @@ class Plotter:
         for plot_fn, name in tqdm(self.plot_fns, "Plotting..."):
             slug = slugify(name)
 
-            fig, axes = plot_fn(df)
+            fig, axes = plot_fn(df.copy())
             fig.suptitle(f"{name} at step {step}")
 
             if overwrite and path:
                 fig.savefig(
                     str(path / f"{slug}.png"),  # type: ignore
                 )
-            else:
-                print("WTF", path, name)
 
     def _plot(self, df: pd.DataFrame, metrics: List[str], **kwargs):
         assert self.experiment is not None, "Experiment not registered with Plotter"
@@ -206,7 +208,7 @@ class Plotter:
             figsize=(len(metrics) * 5, len(variation_hyperparams) * 5),
         )
 
-        fig.subplots_adjust(top=0.95, bottom=0.1)
+        fig.subplots_adjust(top=.9, bottom=.1)
 
         if len(variation_hyperparams) == 1:
             axes = [axes]

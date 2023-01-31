@@ -6,7 +6,7 @@ from torchvision import datasets, transforms
 from perturb.experiment import Experiment
 from perturb.interventions.weights import PerturbWeights
 from perturb.observations.metrics import FullPanelMetrics
-from perturb.observations.plots import Plotter
+from perturb.observations.plots import FullPanelPlotter, Plotter
 from perturb.utils import setup
 from perturb.variables.models import FCN
 
@@ -77,7 +77,7 @@ exp = Experiment(
             seed_perturbation=range(3),
         )
     ],
-    plotter=Plotter(
+    plotter=FullPanelPlotter(
         average_over=["seed_perturbation"],
         dir="plots/vanilla"
     ),
@@ -86,5 +86,5 @@ exp = Experiment(
 )
 
 exp.run(n_epochs=5, n_epochs_at_a_time=2)
-
                                                                                                                                                                                                                                                                                                                                                                                                                             # %%
+# %%
