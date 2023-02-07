@@ -85,6 +85,5 @@ exp = Experiment(
     name="vanilla"
 )
 
-exp.run(n_epochs=5, n_epochs_at_a_time=2)
-                                                                                                                                                                                                                                                                                                                                                                                                                            # %%
+exp.run(n_epochs=5, n_epochs_at_a_time=2)                                                                                                                                                                                                                                                                                                                                                                                                                             # %%
 # %%
