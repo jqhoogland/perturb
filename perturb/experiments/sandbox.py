@@ -82,7 +82,8 @@ exp = Experiment(
         dir="plots/vanilla"
     ),
     metrics=FullPanelMetrics(ivl=200),
-    name="vanilla"
+    name="vanilla",
+    device=device
 )
 
 exp.run(n_epochs=5, n_epochs_at_a_time=2)                                                                                                                                                                                                                                                                                                                                                                                                                             # %%

@@ -49,6 +49,7 @@ class Experiment:
         checkpointer: Optional[Checkpointer] = None,
         metrics: Optional[AbstractMetrics] = None,
         name: Optional[str] = None,
+        device: str = "cpu",
     ):
         # Datasets
 
@@ -85,11 +86,11 @@ class Experiment:
         # Controls
 
         if variations is None:
-            control = Trial(model, opt, (dl_cls, dl_kwargs, datasets["train"]))  # type: ignore
+            control = Trial(model, opt, (dl_cls, dl_kwargs, datasets["train"]), device=device)  # type: ignore
             self.variations = [control]
         else:
             self.variations = [
-                Trial(model, opt, (dl_cls, dl_kwargs, datasets["train"]), variation_combo)  # type: ignore
+                Trial(model, opt, (dl_cls, dl_kwargs, datasets["train"]), variation_combo, device=device)  # type: ignore
                 for variation_combo in itertools.product(
                     *_fix_intervention_group(variations)
                 )

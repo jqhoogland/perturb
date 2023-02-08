@@ -170,3 +170,5 @@ data/**
 **/data/**
 **/archive/**
 **/checkpoints/**
+
+venv/**

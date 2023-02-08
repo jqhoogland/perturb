@@ -27,6 +27,7 @@ class Trial:
         dl: Tuple[Type["ExtendedDataLoader"], Dict[str, Any], Dataset],
         interventions: Optional[List["Intervention"]] = None,
         control: Optional["Trial"] = None,
+        device: str = "cpu"
     ):
         # TODO: What if model_hyperparams or opt_hyperparams are missing defaults?
         self.model_cls, self.model_hyperparams = to_tuple(model, {})
@@ -46,6 +47,7 @@ class Trial:
         self.active = False
 
         self.step = 0
+        self.device = device
 
     def activate(self):
         self.active = True
@@ -53,6 +55,8 @@ class Trial:
         self.model = self.model or self.model_cls(**self.model_hyperparams)  # type: ignore
         self.opt = self.opt or self.opt_cls(self.model.parameters(), **self.opt_hyperparams)  # type: ignore
         self.dl = self.dl or self.dl_cls(self.dataset, **self.dl_hyperparams)  # type: ignore
+
+        self.model.to(self.device)
 
         if self.control is not None:
             self.control.activate()
@@ -177,10 +181,6 @@ class Trial:
 
         return df
 
-    @property
-    def device(self):
-        return self.model.device
-
     def __call__(self, *args, **kwargs) -> t.Tensor:
         assert self.active and self.model is not None, "Trial not active"
         return self.model(*args, **kwargs)
@@ -200,6 +200,7 @@ class Trial:
             dl=(self.dl_cls, self.dl_hyperparams, self.dataset),
             interventions=[*self.interventions, *interventions],
             control=self,
+            device=self.device
         )
 
     @property
